@@ -1,0 +1,3 @@
+USWebCoatedSWOP.icc		https://github.com/lovell/icc/blob/master/test/fixtures/USWebCoatedSWOP.icc
+twily-dir-s-.icc-.zip	https://twily.info/.icc/ISOcoated_v2_300_eci.icc
+prodigi-wrapping-paper-95gsm.icc	https://www.prodigi.com/download/colour-profiles/prodigi-wrapping-paper-95gsm.icc
