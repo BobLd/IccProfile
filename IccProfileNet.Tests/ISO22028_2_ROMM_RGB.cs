@@ -53,6 +53,8 @@
             Assert.True(header.IsProfileIdComputed());
             var profileIDCheck = _profile.ComputeProfileId();
             Assert.Equal(profileIDCheck, header.ProfileId);
+
+            Assert.Equal("2c98a166-95257d52-13906e04-02c0eac9", Helpers.FormatedProfileId(profileIDCheck));
         }
 
         [Fact]

@@ -59,6 +59,8 @@ namespace IccProfileNet.Tests
             Assert.True(header.IsProfileIdComputed());
             var profileIDCheck = _profile.ComputeProfileId();
             Assert.Equal(profileIDCheck, header.ProfileId);
+
+            Assert.Equal("fc663378-37e2886b-fd72e983-8228f1b8", Helpers.FormatedProfileId(profileIDCheck));
         }
 
         [Fact]
