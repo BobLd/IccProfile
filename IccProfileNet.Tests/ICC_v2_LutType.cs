@@ -51,7 +51,8 @@ namespace IccProfileNet.Tests
 
             Assert.Equal("ADBE", header.ProfileCreatorSignature);
 
-            Assert.NotNull(header.ProfileId); // TODO
+            Assert.NotNull(header.ProfileId);
+            Assert.False(header.IsProfileIdComputed());
         }
 
         [Fact]

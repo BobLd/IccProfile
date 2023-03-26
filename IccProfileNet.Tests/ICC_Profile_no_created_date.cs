@@ -52,7 +52,8 @@ namespace IccProfileNet.Tests
 
             Assert.Equal("appl", header.ProfileCreatorSignature);
 
-            Assert.NotNull(header.ProfileId); // TODO
+            Assert.NotNull(header.ProfileId);
+            Assert.False(header.IsProfileIdComputed());
         }
 
         [Fact]

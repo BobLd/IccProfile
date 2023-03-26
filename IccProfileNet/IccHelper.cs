@@ -4,7 +4,7 @@ using System.Text;
 
 namespace IccProfileNet
 {
-    internal static class IccHelper
+    public static class IccHelper
     {
         internal static double[] Lookup(double[] input, double[][] clut, byte[] clutGridPoints)
         {
@@ -41,6 +41,36 @@ namespace IccProfileNet
             }
 
             return clut[(int)index];
+        }
+
+        public static byte[] ComputeProfileId(byte[] profileBytes)
+        {
+            // Compute profile id
+            // This field, if not zero (00h), shall hold the Profile ID. The Profile ID shall be calculated using the MD5
+            // fingerprinting method as defined in Internet RFC 1321.The entire profile, whose length is given by the size field
+            // in the header, with the profile flags field (bytes 44 to 47, see 7.2.11), rendering intent field (bytes 64 to 67, see
+            // 7.2.15), and profile ID field (bytes 84 to 99) in the profile header temporarily set to zeros (00h), shall be used to
+            // calculate the ID. A profile ID field value of zero (00h) shall indicate that a profile ID has not been calculated.
+            // Profile creators should compute and record a profile ID.
+
+            // with the profile flags field (bytes 44 to 47, see 7.2.11)
+            for (int i = IccProfileHeader.ProfileFlagsOffset; i < IccProfileHeader.ProfileFlagsOffset + IccProfileHeader.ProfileFlagsLength; i++)
+            {
+                profileBytes[i] = 0;
+            }
+
+            // rendering intent field (bytes 64 to 67, see 7.2.15)
+            for (int i = IccProfileHeader.RenderingIntentOffset; i < IccProfileHeader.RenderingIntentOffset + IccProfileHeader.RenderingIntentLength; i++)
+            {
+                profileBytes[i] = 0;
+            }
+
+            for (int i = IccProfileHeader.ProfileIdOffset; i < IccProfileHeader.ProfileIdOffset + IccProfileHeader.ProfileIdLength; i++)
+            {
+                profileBytes[i] = 0;
+            }
+
+            return System.Security.Cryptography.MD5.HashData(profileBytes);
         }
 
         internal static string GetString(byte[] bytes, int index, int count)
@@ -102,22 +132,25 @@ namespace IccProfileNet
 
         internal static double ReadU8Fixed8Number(byte[] bytes)
         {
+            // TODO - use ReadUInt16 instead of BitConverter.ToInt16 ????
             if (BitConverter.IsLittleEndian)
             {
                 Array.Reverse(bytes);
             }
 
-            return BitConverter.ToInt16(bytes, 0) / ((double)byte.MaxValue + 1);
+            return Math.Round(BitConverter.ToInt16(bytes, 0) / ((double)byte.MaxValue + 1), 4, MidpointRounding.AwayFromZero);
         }
 
         internal static double Reads15Fixed16Number(byte[] bytes)
         {
+            // TODO - use ReadUInt32 instead of BitConverter.ToInt32 ????
+
             if (BitConverter.IsLittleEndian)
             {
                 Array.Reverse(bytes);
             }
 
-            return (BitConverter.ToInt32(bytes) - 0.5f) / ((double)ushort.MaxValue + 1);
+            return Math.Round((BitConverter.ToInt32(bytes) - 0.5f) / ((double)ushort.MaxValue + 1), 4, MidpointRounding.AwayFromZero);
         }
 
         internal static double[] Reads15Fixed16Array(byte[] bytes)
