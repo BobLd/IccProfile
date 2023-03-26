@@ -5,6 +5,20 @@ namespace IccProfileNet.Tests
 {
     internal static class Helpers
     {
+        public static string FormatedProfileId(byte[] profileId)
+        {
+            // Check size profileId
+            string[] parts = BitConverter.ToString(profileId).ToLower().Split("-");
+
+            string id = string.Empty;
+            for (int i = 0; i < 4; i++)
+            {
+                id += string.Concat(parts.Skip(i * 4).Take(4));
+                id += "-";
+            }
+            return id.Substring(0, id.Length - 1);
+        }
+
         public static void AssertClutLookup(double[] lookup, params double[] values)
         {
             Assert.Equal(values.Length, lookup.Length);
