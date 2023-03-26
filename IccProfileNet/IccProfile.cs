@@ -41,6 +41,39 @@ namespace IccProfileNet
             _tags = new Lazy<IReadOnlyDictionary<string, IccTagTypeBase>>(() => GetTags());
         }
 
+        public byte[] GetOrComputeProfileId()
+        {
+            if (Header.IsProfileIdComputed())
+            {
+                return Header.ProfileId;
+            }
+
+            return ComputeProfileId();
+        }
+
+        public byte[] ComputeProfileId()
+        {
+            return IccHelper.ComputeProfileId(Data);
+        }
+
+        /// <summary>
+        /// Validates the profile against the profile id.
+        /// </summary>
+        /// <returns>
+        /// <c>true</c> if the profile id contained in the header matches the re-computed profile id.
+        /// <c>false</c> if they don't match.
+        /// <c>null</c> if the profile id is not set in the header.
+        /// </returns>
+        public bool? ValidateProfile()
+        {
+            if (Header.IsProfileIdComputed())
+            {
+                return null;
+            }
+
+            return Header.ProfileId.SequenceEqual(ComputeProfileId());
+        }
+
         private static IccTagTableItem[] ParseTagTable(byte[] bytes)
         {
             // Tag count (n)

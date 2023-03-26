@@ -159,6 +159,11 @@ namespace IccProfileNet
         /// </summary>
         public byte[] ProfileId => _profileId.Value;
 
+        public bool IsProfileIdComputed()
+        {
+            return !ProfileId.All(v => v == 0);
+        }
+
         public IccProfileHeader(byte[] profile)
         {
             // Profile version number
@@ -299,21 +304,7 @@ namespace IccProfileNet
             {
                 // Profile ID
                 // 84 to 99
-                byte[] profileId = profile.Skip(ProfileIdOffset).Take(ProfileIdLength).ToArray();
-
-                if (profileId.All(b => b == 0))
-                {
-                    // Compute profile id
-                    // This field, if not zero (00h), shall hold the Profile ID. The Profile ID shall be calculated using the MD5
-                    // fingerprinting method as defined in Internet RFC 1321.The entire profile, whose length is given by the size field
-                    // in the header, with the profile flags field (bytes 44 to 47, see 7.2.11), rendering intent field (bytes 64 to 67, see
-                    // 7.2.15), and profile ID field (bytes 84 to 99) in the profile header temporarily set to zeros (00h), shall be used to
-                    // calculate the ID. A profile ID field value of zero (00h) shall indicate that a profile ID has not been calculated.
-                    // Profile creators should compute and record a profile ID.
-
-                    profileId = System.Security.Cryptography.MD5.HashData(profile);
-                }
-                return profileId;
+                return profile.Skip(ProfileIdOffset).Take(ProfileIdLength).ToArray();
             });
         }
 

@@ -53,7 +53,10 @@ namespace IccProfileNet.Tests
 
             Assert.Equal("", header.ProfileCreatorSignature);
 
-            Assert.NotNull(header.ProfileId); // TODO
+            Assert.NotNull(header.ProfileId);
+            Assert.True(header.IsProfileIdComputed());
+            var profileIDCheck = _profile.ComputeProfileId();
+            Assert.Equal(profileIDCheck, header.ProfileId);
         }
 
         [Fact]
