@@ -45,11 +45,11 @@ namespace IccProfileNet
         public const int ProfileIdLength = 16;
         #endregion
 
-        private readonly Lazy<uint> _profileSize;
+        private readonly Lazy<uint> profileSize;
         /// <summary>
         /// Profile size.
         /// </summary>
-        public uint ProfileSize => _profileSize.Value;
+        public uint ProfileSize => profileSize.Value;
 
         /// <summary>
         /// Profile major version.
@@ -66,98 +66,98 @@ namespace IccProfileNet
         /// </summary>
         public int VersionBugFix { get; }
 
-        private readonly Lazy<string> _cmm;
+        private readonly Lazy<string> cmm;
         /// <summary>
         /// Preferred CMM type.
         /// </summary>
-        public string Cmm => _cmm.Value;
+        public string Cmm => cmm.Value;
 
-        private readonly Lazy<IccProfileClass> _profileClass;
+        private readonly Lazy<IccProfileClass> profileClass;
         /// <summary>
         /// Profile/Device class.
         /// </summary>
-        public IccProfileClass ProfileClass => _profileClass.Value;
+        public IccProfileClass ProfileClass => profileClass.Value;
 
-        private readonly Lazy<IccColourSpaceType> _colourSpace;
+        private readonly Lazy<IccColourSpaceType> colourSpace;
         /// <summary>
         /// Colour space of data (possibly a derived space).
         /// </summary>
-        public IccColourSpaceType ColourSpace => _colourSpace.Value;
+        public IccColourSpaceType ColourSpace => colourSpace.Value;
 
-        private readonly Lazy<IccProfileConnectionSpace> _pcs;
+        private readonly Lazy<IccProfileConnectionSpace> pcs;
         /// <summary>
         /// Profile connection space. An abstract color space used to connect the source and destination profiles.
         /// </summary>
-        public IccProfileConnectionSpace Pcs => _pcs.Value;
+        public IccProfileConnectionSpace Pcs => pcs.Value;
 
-        private readonly Lazy<DateTime?> _created;
+        private readonly Lazy<DateTime?> created;
         /// <summary>
         /// Date and time this profile was first created.
         /// </summary>
-        public DateTime? Created => _created.Value;
+        public DateTime? Created => created.Value;
 
-        private readonly Lazy<string> _profileSignature;
+        private readonly Lazy<string> profileSignature;
         /// <summary>
         /// profile file signature.
         /// </summary>
-        public string ProfileSignature => _profileSignature.Value;
+        public string ProfileSignature => profileSignature.Value;
 
-        private readonly Lazy<IccPrimaryPlatforms> _primaryPlatformSignature;
+        private readonly Lazy<IccPrimaryPlatforms> primaryPlatformSignature;
         /// <summary>
         /// Primary platform signature.
         /// </summary>
-        public IccPrimaryPlatforms PrimaryPlatformSignature => _primaryPlatformSignature.Value;
+        public IccPrimaryPlatforms PrimaryPlatformSignature => primaryPlatformSignature.Value;
 
-        private readonly Lazy<byte[]> _profileFlags;
+        private readonly Lazy<byte[]> profileFlags;
         /// <summary>
         /// Profile flags to indicate various options for the CMM such as distributed
         /// processing and caching options.
         /// </summary>
-        public byte[] ProfileFlags => _profileFlags.Value;
+        public byte[] ProfileFlags => profileFlags.Value;
 
-        private readonly Lazy<string> _deviceManufacturer;
+        private readonly Lazy<string> deviceManufacturer;
         /// <summary>
         /// Device manufacturer of the device for which this profile is created.
         /// </summary>
-        public string DeviceManufacturer => _deviceManufacturer.Value;
+        public string DeviceManufacturer => deviceManufacturer.Value;
 
-        private readonly Lazy<string> _deviceModel;
+        private readonly Lazy<string> deviceModel;
         /// <summary>
         /// Device model of the device for which this profile is created.
         /// </summary>
-        public string DeviceModel => _deviceModel.Value;
+        public string DeviceModel => deviceModel.Value;
 
-        private readonly Lazy<byte[]> _deviceAttributes;
+        private readonly Lazy<byte[]> deviceAttributes;
         /// <summary>
         /// Device attributes unique to the particular device setup such as media type.
         /// </summary>
-        public byte[] DeviceAttributes => _deviceAttributes.Value;
+        public byte[] DeviceAttributes => deviceAttributes.Value;
 
-        private readonly Lazy<IccRenderingIntent> _renderingIntent;
+        private readonly Lazy<IccRenderingIntent> renderingIntent;
         /// <summary>
         /// A particular gamut mapping style or method of converting colors in one gamut to colors in another gamut.
         /// </summary>
-        public IccRenderingIntent RenderingIntent => _renderingIntent.Value;
+        public IccRenderingIntent RenderingIntent => renderingIntent.Value;
 
-        private readonly Lazy<IccXyz> _nciexyz;
+        private readonly Lazy<IccXyz> nciexyz;
         /// <summary>
         /// The nCIEXYZ values of the illuminant of the PCS.
         /// </summary>
 #pragma warning disable IDE1006 // Naming Styles
-        public IccXyz nCIEXYZ => _nciexyz.Value;
+        public IccXyz nCIEXYZ => nciexyz.Value;
 #pragma warning restore IDE1006 // Naming Styles
 
-        private readonly Lazy<string> _profileCreatorSignature;
+        private readonly Lazy<string> profileCreatorSignature;
         /// <summary>
         /// Profile creator signature.
         /// </summary>
-        public string ProfileCreatorSignature => _profileCreatorSignature.Value;
+        public string ProfileCreatorSignature => profileCreatorSignature.Value;
 
-        private readonly Lazy<byte[]> _profileId;
+        private readonly Lazy<byte[]> profileId;
         /// <summary>
         /// Profile ID.
         /// </summary>
-        public byte[] ProfileId => _profileId.Value;
+        public byte[] ProfileId => profileId.Value;
 
         public bool IsProfileIdComputed()
         {
@@ -180,35 +180,35 @@ namespace IccProfileNet
             VersionMinor = (int)((uint)(profileVersionNumber[1] & 0xf0) >> 4);
             VersionBugFix = (int)(uint)(profileVersionNumber[1] & 0x0f);
 
-            _profileSize = new Lazy<uint>(() =>
+            profileSize = new Lazy<uint>(() =>
             {
                 // Profile size
                 // 0 to 3 - UInt32Number
                 return IccHelper.ReadUInt32(profile.Skip(ProfileSizeOffset).Take(ProfileSizeLength).ToArray());
             });
 
-            _cmm = new Lazy<string>(() =>
+            cmm = new Lazy<string>(() =>
             {
                 // Preferred CMM type
                 // 4 to 7
                 return IccHelper.GetString(profile, CmmOffset, CmmLength);
             });
 
-            _profileClass = new Lazy<IccProfileClass>(() =>
+            profileClass = new Lazy<IccProfileClass>(() =>
             {
                 // Profile/Device class
                 // 12 to 15
                 return IccHelper.GetProfileClass(IccHelper.GetString(profile, ProfileClassOffset, ProfileClassLength));
             });
 
-            _colourSpace = new Lazy<IccColourSpaceType>(() =>
+            colourSpace = new Lazy<IccColourSpaceType>(() =>
             {
                 // Colour space of data (possibly a derived space)
                 // 16 to 19
                 return IccHelper.GetColourSpaceType(IccHelper.GetString(profile, ColourSpaceOffset, ColourSpaceLength));
             });
 
-            _pcs = new Lazy<IccProfileConnectionSpace>(() =>
+            pcs = new Lazy<IccProfileConnectionSpace>(() =>
             {
                 // PCS
                 // 20 to 23
@@ -226,14 +226,14 @@ namespace IccProfileNet
                 }
             });
 
-            _created = new Lazy<DateTime?>(() =>
+            created = new Lazy<DateTime?>(() =>
             {
                 // Date and time this profile was first created
                 // 24 to 35 - dateTimeNumber
                 return IccHelper.ReadDateTime(profile.Skip(CreatedOffset).Take(CreatedLength).ToArray());
             });
 
-            _profileSignature = new Lazy<string>(() =>
+            profileSignature = new Lazy<string>(() =>
             {
                 // ‘acsp’ (61637370h) profile file signature
                 // 36 to 39
@@ -241,14 +241,14 @@ namespace IccProfileNet
                 return IccHelper.GetString(profile, ProfileSignatureOffset, ProfileSignatureLength);
             });
 
-            _primaryPlatformSignature = new Lazy<IccPrimaryPlatforms>(() =>
+            primaryPlatformSignature = new Lazy<IccPrimaryPlatforms>(() =>
             {
                 // Primary platform signature
                 // 40 to 43
                 return IccHelper.GetPrimaryPlatforms(IccHelper.GetString(profile, PrimaryPlatformSignatureOffset, PrimaryPlatformSignatureLength));
             });
 
-            _profileFlags = new Lazy<byte[]>(() =>
+            profileFlags = new Lazy<byte[]>(() =>
             {
                 // Profile flags to indicate various options for the CMM such as distributed
                 // processing and caching options
@@ -256,35 +256,35 @@ namespace IccProfileNet
                 return profile.Skip(ProfileFlagsOffset).Take(ProfileFlagsLength).ToArray();// TODO
             });
 
-            _deviceManufacturer = new Lazy<string>(() =>
+            deviceManufacturer = new Lazy<string>(() =>
             {
                 // Device manufacturer of the device for which this profile is created
                 // 48 to 51
                 return IccHelper.GetString(profile, DeviceManufacturerOffset, DeviceManufacturerLength);
             });
 
-            _deviceModel = new Lazy<string>(() =>
+            deviceModel = new Lazy<string>(() =>
             {
                 // Device model of the device for which this profile is created
                 // 52 to 55
                 return IccHelper.GetString(profile, DeviceModelOffset, DeviceModelLength);
             });
 
-            _deviceAttributes = new Lazy<byte[]>(() =>
+            deviceAttributes = new Lazy<byte[]>(() =>
             {
                 // Device attributes unique to the particular device setup such as media type
                 // 56 to 63
                 return profile.Skip(DeviceAttributesOffset).Take(DeviceAttributesLength).ToArray(); // TODO
             });
 
-            _renderingIntent = new Lazy<IccRenderingIntent>(() =>
+            renderingIntent = new Lazy<IccRenderingIntent>(() =>
             {
                 // Rendering Intent
                 // 64 to 67
                 return (IccRenderingIntent)IccHelper.ReadUInt32(profile.Skip(RenderingIntentOffset).Take(RenderingIntentLength).ToArray());
             });
 
-            _nciexyz = new Lazy<IccXyz>(() =>
+            nciexyz = new Lazy<IccXyz>(() =>
             {
                 // The nCIEXYZ values of the illuminant of the PCS
                 // 68 to 79 - XYZNumber
@@ -293,14 +293,14 @@ namespace IccProfileNet
                 return IccHelper.ReadXyz(profile.Skip(nCIEXYZOffset).Take(nCIEXYZLength).ToArray());
             });
 
-            _profileCreatorSignature = new Lazy<string>(() =>
+            profileCreatorSignature = new Lazy<string>(() =>
             {
                 // Profile creator signature
                 // 80 to 83
                 return IccHelper.GetString(profile, ProfileCreatorSignatureOffset, ProfileCreatorSignatureLength);
             });
 
-            _profileId = new Lazy<byte[]>(() =>
+            profileId = new Lazy<byte[]>(() =>
             {
                 // Profile ID
                 // 84 to 99

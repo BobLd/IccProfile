@@ -13,12 +13,12 @@ namespace IccProfileNet.Tags
 
         private readonly Func<double, double> _func;
         private readonly Lazy<double> _g;
-        private readonly Lazy<double>? _a;
-        private readonly Lazy<double>? _b;
-        private readonly Lazy<double>? _c;
-        private readonly Lazy<double>? _d;
-        private readonly Lazy<double>? _e;
-        private readonly Lazy<double>? _f;
+        private readonly Lazy<double> _a;
+        private readonly Lazy<double> _b;
+        private readonly Lazy<double> _c;
+        private readonly Lazy<double> _d;
+        private readonly Lazy<double> _e;
+        private readonly Lazy<double> _f;
 
         public IccParametricCurveType(byte[] rawData)
         {

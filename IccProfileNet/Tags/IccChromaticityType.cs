@@ -29,7 +29,7 @@ namespace IccProfileNet.Tags
         /// </summary>
         public double[] XyCoordinateValuesOfChannel1 { get; }
 
-        public double[]? XyCoordinateValuesOfOtherChannels { get; }
+        public double[] XyCoordinateValuesOfOtherChannels { get; }
 
         public IccChromaticityType(byte[] bytes)
         {

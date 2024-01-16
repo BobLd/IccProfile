@@ -64,12 +64,12 @@ namespace IccProfileNet.Tags
         private readonly Lazy<int> _offsetMatrix;
         public int OffsetMatrix => _offsetMatrix.Value;
 
-        private readonly Lazy<double[]?> _matrix;
+        private readonly Lazy<double[]> _matrix;
 
         /// <summary>
         /// [e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, e11, e12]
         /// </summary>
-        public double[]? Matrix => _matrix.Value;
+        public double[] Matrix => _matrix.Value;
 
         /// <summary>
         /// <c>true</c> if Matrix is defined.
@@ -82,26 +82,26 @@ namespace IccProfileNet.Tags
         /// </summary>
         public int OffsetFirstMCurve => _offsetFirstMCurve.Value;
 
-        private readonly Lazy<IccBaseCurveType[]?> _mCurves;
-        public IccBaseCurveType[]? MCurves => _mCurves.Value;
+        private readonly Lazy<IccBaseCurveType[]> _mCurves;
+        public IccBaseCurveType[] MCurves => _mCurves.Value;
 
         /// <summary>
         /// <c>true</c> if M curves are defined.
         /// </summary>
         public bool HasMCurves => OffsetFirstMCurve != 0;
 
-        private readonly Lazy<byte[]?> _clutGridPoints;
-        public byte[]? ClutGridPoints => _clutGridPoints.Value;
+        private readonly Lazy<byte[]> _clutGridPoints;
+        public byte[] ClutGridPoints => _clutGridPoints.Value;
 
         private readonly Lazy<int> _offsetClut;
         public int OffsetClut => _offsetClut.Value;
 
-        private readonly Lazy<double[][]?> _clut;
+        private readonly Lazy<double[][]> _clut;
 
         /// <summary>
         /// Multi-dimensional colour lookup table.
         /// </summary>
-        public double[][]? Clut => _clut.Value;
+        public double[][] Clut => _clut.Value;
 
         /// <summary>
         /// <c>true</c> if CLUT is defined.
@@ -114,15 +114,15 @@ namespace IccProfileNet.Tags
         /// </summary>
         public int OffsetFirstACurve => _offsetFirstACurve.Value;
 
-        private readonly Lazy<IccBaseCurveType[]?> _aCurves;
-        public IccBaseCurveType[]? ACurves => _aCurves.Value;
+        private readonly Lazy<IccBaseCurveType[]> _aCurves;
+        public IccBaseCurveType[] ACurves => _aCurves.Value;
 
         /// <summary>
         /// <c>true</c> if A curves are defined.
         /// </summary>
         public bool HasACurve => OffsetFirstACurve != 0;
 
-        private readonly Lazy<double[]?> _lookupWeights;
+        private readonly Lazy<double[]> _lookupWeights;
 
         public IccLutABType(byte[] data)
         {
@@ -202,7 +202,7 @@ namespace IccProfileNet.Tags
                     .ToArray());
             });
 
-            _aCurves = new Lazy<IccBaseCurveType[]?>(() =>
+            _aCurves = new Lazy<IccBaseCurveType[]>(() =>
             {
                 if (OffsetFirstACurve == 0)
                 {
@@ -210,7 +210,7 @@ namespace IccProfileNet.Tags
                 }
 
                 int offset = 0;
-                IccBaseCurveType[]? aCurves = new IccBaseCurveType[Type == LutABType.AB ? NumberOfInputChannels : NumberOfOutputChannels];
+                IccBaseCurveType[] aCurves = new IccBaseCurveType[Type == LutABType.AB ? NumberOfInputChannels : NumberOfOutputChannels];
                 for (byte a = 0; a < aCurves.Length; a++)
                 {
                     var curve = IccBaseCurveType.Parse(RawData.Skip((int)OffsetFirstACurve + offset).ToArray());
@@ -233,7 +233,7 @@ namespace IccProfileNet.Tags
                 return bCurves;
             });
 
-            _mCurves = new Lazy<IccBaseCurveType[]?>(() =>
+            _mCurves = new Lazy<IccBaseCurveType[]>(() =>
             {
                 if (OffsetFirstMCurve == 0)
                 {
@@ -241,7 +241,7 @@ namespace IccProfileNet.Tags
                 }
 
                 int offset = 0;
-                IccBaseCurveType[]? mCurves = new IccBaseCurveType[Type == LutABType.AB ? NumberOfOutputChannels : NumberOfInputChannels];
+                IccBaseCurveType[] mCurves = new IccBaseCurveType[Type == LutABType.AB ? NumberOfOutputChannels : NumberOfInputChannels];
                 for (byte m = 0; m < mCurves.Length; m++)
                 {
                     var curve = IccBaseCurveType.Parse(RawData.Skip((int)OffsetFirstMCurve + offset).ToArray());
@@ -251,19 +251,19 @@ namespace IccProfileNet.Tags
                 return mCurves;
             });
 
-            _matrix = new Lazy<double[]?>(() =>
+            _matrix = new Lazy<double[]>(() =>
             {
                 if (OffsetMatrix == 0)
                 {
                     return null;
                 }
 
-                double[]? matrix = new double[3 * 4];
+                double[] matrix = new double[3 * 4];
                 byte[] matrixData = RawData.Skip((int)OffsetMatrix).Take(matrix.Length * IccHelper.S15Fixed16Length).ToArray();
                 return IccHelper.Reads15Fixed16Array(matrixData);
             });
 
-            _clutGridPoints = new Lazy<byte[]?>(() =>
+            _clutGridPoints = new Lazy<byte[]>(() =>
             {
                 if (OffsetClut == 0)
                 {
@@ -274,7 +274,7 @@ namespace IccProfileNet.Tags
                     .Take(NumberOfInputChannels).ToArray();
             });
 
-            _clut = new Lazy<double[][]?>(() =>
+            _clut = new Lazy<double[][]>(() =>
             {
                 // CLUT
                 if (OffsetClut == 0)
@@ -306,7 +306,7 @@ namespace IccProfileNet.Tags
 
                 int l = 0;
                 int clutSize = 1;
-                foreach (byte gridPoint in ClutGridPoints!)
+                foreach (byte gridPoint in ClutGridPoints)
                 {
                     clutSize *= gridPoint;
                 }
@@ -326,9 +326,9 @@ namespace IccProfileNet.Tags
                 return clut;
             });
 
-            _lookupWeights = new Lazy<double[]?>(() =>
+            _lookupWeights = new Lazy<double[]>(() =>
             {
-                double[]? weights = null;
+                double[] weights = null;
                 if (ClutGridPoints != null)
                 {
                     // Pre compute Lookup weigth
@@ -389,20 +389,7 @@ namespace IccProfileNet.Tags
                 throw new ArgumentNullException("No Clut.");
             }
 
-            // https://stackoverflow.com/questions/35109195/how-do-the-the-different-parts-of-an-icc-file-work-together
-            if (input.Length != ClutGridPoints.Length)
-            {
-                throw new ArgumentException("TODO");
-            }
-
-            // TODO - Need interpolation
-            double index = 0;
-            for (int i = 0; i < input.Length; i++)
-            {
-                index += input[i] * _lookupWeights.Value[i];
-            }
-
-            return Clut[(int)index];
+            return IccHelper.Lookup(input, Clut, ClutGridPoints);
         }
 
         private static double[] ProcessCurves(double[] input, IccBaseCurveType[] curves)
@@ -470,7 +457,7 @@ namespace IccProfileNet.Tags
 
             if (HasACurve)
             {
-                pipeline.Add((x, h) => ProcessCurves(x, ACurves!));
+                pipeline.Add((x, h) => ProcessCurves(x, ACurves));
             }
 
             if (HasClut)
@@ -480,7 +467,7 @@ namespace IccProfileNet.Tags
 
             if (HasMCurves)
             {
-                pipeline.Add((x, h) => ProcessCurves(x, MCurves!));
+                pipeline.Add((x, h) => ProcessCurves(x, MCurves));
             }
 
             if (HasMatrix)
@@ -512,12 +499,12 @@ namespace IccProfileNet.Tags
 
             if (HasMCurves)
             {
-                pipeline.Add((x, h) => ProcessCurves(x, MCurves!));
+                pipeline.Add((x, h) => ProcessCurves(x, MCurves));
             }
 
             if (HasACurve)
             {
-                pipeline.Add((x, h) => ProcessCurves(x, ACurves!));
+                pipeline.Add((x, h) => ProcessCurves(x, ACurves));
             }
 
             return pipeline.ToArray();

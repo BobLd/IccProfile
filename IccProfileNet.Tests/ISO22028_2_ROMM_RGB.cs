@@ -12,7 +12,7 @@
         [Fact]
         public void Process()
         {
-            _profile.TryProcess(new double[] { 0.5, 0.5, 0.5 }, out var test);
+            _profile.TryProcessToPcs(new double[] { 0.5, 0.5, 0.5 }, null, out var test);
         }
 
         [Fact]

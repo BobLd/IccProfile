@@ -18,7 +18,8 @@ namespace IccProfileNet
             double index = 0;
             for (int i = 0; i < input.Length; i++)
             {
-                double w = input[i] * clutGridPoints[i];
+                double w = input[i] * (clutGridPoints[i] - 1); // Scale to clut size
+
                 for (int j = i + 1; j < input.Length; j++)
                 {
                     w *= clutGridPoints[j];
@@ -31,16 +32,24 @@ namespace IccProfileNet
 
         internal static double[] Lookup(double[] input, double[][] clut, int clutGridPoints)
         {
-            // https://stackoverflow.com/questions/35109195/how-do-the-the-different-parts-of-an-icc-file-work-together
-
-            // TODO - Need interpolation
-            double index = 0;
+            // TODO - check if works
+            byte[] points = new byte[input.Length];
             for (int i = 0; i < input.Length; i++)
             {
-                index += input[i] * Math.Pow(clutGridPoints, input.Length - i);
+                points[i] = (byte)clutGridPoints;
             }
 
-            return clut[(int)index];
+            return Lookup(input, clut, points);
+
+            // https://stackoverflow.com/questions/35109195/how-do-the-the-different-parts-of-an-icc-file-work-together
+            // TODO - Need interpolation
+            //double index = 0;
+            //for (int i = 0; i < input.Length; i++)
+            //{
+            //    index += input[i] * Math.Pow(clutGridPoints - 1, input.Length - i);
+            //}
+
+            //return clut[(int)index];
         }
 
         public static byte[] ComputeProfileId(byte[] profileBytes)

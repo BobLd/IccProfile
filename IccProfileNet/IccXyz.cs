@@ -1,6 +1,6 @@
 ﻿namespace IccProfileNet
 {
-    public struct IccXyz
+    public readonly struct IccXyz
     {
         /// <summary>
         /// X.
